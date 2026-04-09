@@ -889,7 +889,8 @@
         const currentIndex = Math.round(container.scrollTop / container.clientHeight);
         if (['ArrowDown','ArrowRight',' '].includes(e.key) || e.code === 'Space') {
             e.preventDefault();
-            slides[Math.min(currentIndex + 1, totalSlides - 1)].scrollIntoView({ behavior: 'smooth' });
+            const target = currentIndex === totalSlides - 1 ? 0 : currentIndex + 1;
+            slides[target].scrollIntoView({ behavior: 'smooth' });
         } else if (['ArrowUp','ArrowLeft'].includes(e.key)) {
             e.preventDefault();
             const target = currentIndex === 0 ? totalSlides - 1 : currentIndex - 1;
