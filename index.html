@@ -205,6 +205,31 @@
             .qr-img { width: 220px !important; height: 220px !important; }
             .img-showcase { max-height: 30vh; }
         }
+        /* iPad portrait/landscape fine-tuning */
+        @media (max-width: 1366px) and (pointer: coarse) {
+            .slide { padding: 34px 24px; }
+            h1 { font-size: 52px; }
+            h2 { font-size: 38px; }
+            p, li { font-size: 24px; line-height: 1.55; }
+            .diagram-box { padding: 24px; }
+            .flow-card { min-width: 220px; padding: 22px; }
+            .img-showcase { max-height: 48vh; }
+            .page-number { bottom: 22px; left: 24px; font-size: 13px; }
+        }
+        /* Phone-first layout hardening */
+        @media (max-width: 768px) {
+            .slide { padding: 24px 16px; }
+            h1 { font-size: 36px !important; }
+            h2 { font-size: 28px !important; padding-left: 16px; border-left-width: 4px; margin-bottom: 20px; }
+            h3 { font-size: 24px !important; margin-bottom: 12px; }
+            p, li { font-size: 20px !important; line-height: 1.5; margin-bottom: 12px; }
+            .diagram-box { padding: 16px; border-radius: 12px; }
+            .flow-card { min-width: 100%; padding: 16px; }
+            .arrow-right { transform: rotate(90deg); }
+            .img-showcase { max-height: 52vh; width: 100% !important; }
+            .page-number { font-size: 12px; left: 12px; bottom: 12px; letter-spacing: 1px; }
+            .progress-bar { height: 3px; }
+        }
     </style>
 </head>
 <body>
@@ -906,7 +931,8 @@
     function shouldUseProjectorMode() {
         const wideScreen = window.innerWidth >= projectorScaleThreshold || window.screen.width >= 1920;
         const inFullscreen = document.fullscreenElement != null;
-        return wideScreen || inFullscreen;
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+        return (wideScreen || inFullscreen) && !isTouchDevice;
     }
 
     function applyProjectorMode() {
