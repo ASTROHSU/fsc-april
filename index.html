@@ -69,6 +69,13 @@
         }
         .slides-container::-webkit-scrollbar { display: none; }
         .slides-container { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Projector mode: scale up entire deck for distant screens */
+        body.projector-mode .slides-container {
+            transform: scale(1.12);
+            transform-origin: top left;
+            width: calc(100% / 1.12);
+            height: calc(100vh / 1.12);
+        }
         .slide {
             width: 100%; height: 100vh; min-height: 100vh;
             padding: 60px 80px;
@@ -894,6 +901,22 @@
     const totalSlides = slides.length;
     const pageNumDisplay = document.getElementById('page-num');
     const progressBar = document.getElementById('progress-bar');
+    const projectorScaleThreshold = 1600;
+
+    function shouldUseProjectorMode() {
+        const wideScreen = window.innerWidth >= projectorScaleThreshold || window.screen.width >= 1920;
+        const inFullscreen = document.fullscreenElement != null;
+        return wideScreen || inFullscreen;
+    }
+
+    function applyProjectorMode() {
+        document.body.classList.toggle('projector-mode', shouldUseProjectorMode());
+    }
+
+    // Auto-detect large/projection displays and fullscreen presentations.
+    applyProjectorMode();
+    window.addEventListener('resize', applyProjectorMode);
+    document.addEventListener('fullscreenchange', applyProjectorMode);
     container.addEventListener('scroll', () => {
         const scrollTop = container.scrollTop;
         const slideHeight = container.clientHeight;
@@ -904,7 +927,11 @@
     });
     document.addEventListener('keydown', (e) => {
         const currentIndex = Math.round(container.scrollTop / container.clientHeight);
-        if (['ArrowDown','ArrowRight',' '].includes(e.key) || e.code === 'Space') {
+        if (e.key.toLowerCase() === 'p') {
+            // Manual override for onsite setup (toggle projector mode).
+            document.body.classList.toggle('projector-mode');
+            return;
+        } else if (['ArrowDown','ArrowRight',' '].includes(e.key) || e.code === 'Space') {
             e.preventDefault();
             const target = currentIndex === totalSlides - 1 ? 0 : currentIndex + 1;
             slides[target].scrollIntoView({ behavior: 'smooth' });
